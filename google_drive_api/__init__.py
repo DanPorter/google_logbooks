@@ -25,4 +25,7 @@ Diamond Light Source Ltd
 2022
 """
 
+__version__ = "1.0.0"
+__date__ = '18/02/2022'
+
 from google_drive_api.api_classes import GoogleDriveApi
