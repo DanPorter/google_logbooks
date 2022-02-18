@@ -109,6 +109,42 @@ def download_logbook(exp_pars_file='mm12345-1.json'):
     gdrive.download_pdf(exppars['logbook_id'], output_pdf)
 
 
+def append_text(exp_pars_file='mm12345-1.json', text_to_append=''):
+    """
+    Use Google Drive API to:
+        - download pdf of GoogleDoc logbook
+    :param exp_pars_file: str filepath of experimental parameters json file
+    :param text_to_append: str text to append to file
+    :return: None
+    """
+    # Read merge fields JSON
+    exppars = read_exppars(exp_pars_file)
+
+    if not exppars['logbook_id']:
+        print("Logbook doesn't exists!")
+        return
+
+    gdrive.append_text(exppars['logbook_id'], text_to_append)
+
+
+def append_image(exp_pars_file='mm12345-1.json', image_loc=''):
+    """
+    Use Google Drive API to:
+        - download pdf of GoogleDoc logbook
+    :param exp_pars_file: str filepath of experimental parameters json file
+    :param image_loc: str filename of image to append
+    :return: None
+    """
+    # Read merge fields JSON
+    exppars = read_exppars(exp_pars_file)
+
+    if not exppars['logbook_id']:
+        print("Logbook doesn't exists!")
+        return
+
+    gdrive.append_image(exppars['logbook_id'], image_loc)
+
+
 if __name__ == '__main__':
     # --- Command line usage ---
     filearg = sys.argv[-1]
