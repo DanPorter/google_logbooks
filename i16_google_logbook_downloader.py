@@ -18,8 +18,7 @@ Diamond Light Source Lid
 
 import sys
 
-from i16_google_logbook_maker import download_logbook
-
+from i16_google_logbook_scripts import download_logbook
 
 if __name__ == '__main__':
     # --- Command line usage ---

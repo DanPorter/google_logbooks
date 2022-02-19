@@ -5,8 +5,7 @@ I16 Google Logbooks software
  - Get sharable link from new logbook and put in a list of logbooks
 """
 
-
-from i16_google_logbook_maker import create_new_logbook, write_exppars
+from i16_google_logbook_scripts import write_exppars, create_new_logbook
 
 exppars = {
     'id': 'mm12345-1',

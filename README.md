@@ -17,8 +17,11 @@ $ python i16_google_logbook_downloader.py /dls_sw/i16/scripts/2022/mm12345-1/mm1
 ```
 
 ####Python Script usage
+
 ```python
+import i16_google_logbook_scripts
 from google_drive_api import GoogleDriveApi
+
 gdrive = GoogleDriveApi('credentials.json')
 
 doc = gdrive.get_file('file_id')
@@ -34,8 +37,8 @@ gdrive.download_pdf('file_id', 'file.pdf')
 
 print(doc)  # shows filename, id, link
 doc.merge({'{{replace_me}}': 'with me'})
-doc.append_text('text to append')
-doc.append_image('loc/of/image.png')
+i16_google_logbook_scripts.append_text('text to append')
+i16_google_logbook_scripts.append_image('loc/of/image.png')
 doc.download_pdf('file.pdf')
 ```
 

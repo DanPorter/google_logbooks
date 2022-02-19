@@ -23,7 +23,7 @@ import os
 pth = os.path.expanduser('~/OneDrive - Diamond Light Source Ltd/PythonProjects')
 sys.path.insert(0, pth + '/babelscan')
 
-from i16_google_logbook_maker import append_image
+from i16_google_logbook_scripts import append_image
 import babelscan
 
 CONFIG = '/dls_sw/i16/software/python/babelscan/config_files/i16.config'
