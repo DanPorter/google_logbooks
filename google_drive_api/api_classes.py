@@ -67,6 +67,15 @@ class GoogleDriveApi:
         """
         return api.get_drive_file_link(file_id, self.drive_service)
 
+    def get_metadata(self, file_id, fields='*'):
+        """
+        Get metadata fields for file
+        :param file_id: str, FileID
+        :param fields: str, list of metadata fields, e.g. 'id, name, webContentLink, webViewLink'
+        :return: dict
+        """
+        return api.get_drive_file_metadata(file_id, fields)
+
     def change_permission(self, file_id, can_edit=False):
         """
         Change permission to anyone can view or edit
@@ -75,12 +84,13 @@ class GoogleDriveApi:
         """
         api.change_permission(file_id, can_edit, self.drive_service)
 
-    def upload_file(self, filename):
+    def upload_file(self, filename, folder_id=None):
         """
         Upload a local file to Google Drive. If the file exists already, return the previous file link
         :param filename: local filename to upload
+        :param folder_id: None or Dirve ID to add file to
         """
-        api.upload_file(filename, self.drive_service)
+        api.upload_file(filename, folder_id, drive_service=self.drive_service)
 
     def download_pdf(self, file_id, local_filename):
         """
@@ -116,13 +126,14 @@ class GoogleDriveApi:
         """
         api.append_text(doc_id, text_to_append, self.docs_service)
 
-    def append_image(self, doc_id, image_loc=''):
+    def append_image(self, doc_id, image_loc='', folder_id=None):
         """
         Append image to end of Goodle Doc
         :param doc_id: str GoogleDoc id
         :param image_loc: location of file, either local filename or http link
+        :param folder_id: None or id of Drive folder to add image to
         """
-        api.append_image(doc_id, image_loc, self.docs_service)
+        api.append_image(doc_id, image_loc, folder_id, docs_service=self.docs_service)
 
 
 class GoogleDriveFile:
@@ -168,6 +179,14 @@ class GoogleDriveFile:
         self.name = file['name']
         self.link = file['webViewLink']
 
+    def get_metadata(self, fields='*'):
+        """
+        Get metadata fields
+        :param fields: str, list of metadata fields, e.g. 'id, name, webContentLink, webViewLink'
+        :return: dict
+        """
+        return api.get_drive_file_metadata(self.id, fields)
+
     def change_permission(self, can_edit=False):
         """
         Change permission to anyone can view or edit
@@ -196,10 +215,10 @@ class GoogleDriveFile:
         """
         api.append_text(self.id, text_to_append, self.docs_service)
 
-    def append_image(self, image_loc):
+    def append_image(self, image_loc, image_folder_id=None):
         """
         Append a image to the end of the file
         :param image_loc: location of file, either local filename or http link
-        :return:
+        :param image_folder_id: None or ID of Drive folder to add image to
         """
-        api.append_image(self.id, image_loc, self.docs_service)
+        api.append_image(self.id, image_loc, image_folder_id, docs_service=self.docs_service)

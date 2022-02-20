@@ -80,6 +80,23 @@ def get_drive_file_dict(file_id, drive_service=None, creds=None):
     return file
 
 
+def get_drive_file_metadata(file_id, fields='*', drive_service=None, creds=None):
+    """
+    Get sharable link for file
+    :param file_id: str, FileID
+    :param fields: str, list of metadata fields, e.g. 'id, name, webContentLink, webViewLink'
+    :param drive_service: GoogleDriveAPI service
+    :param creds: GoogleDocsAPI credentials
+    :return: dict Drive file details
+    """
+    if drive_service is None:
+        if creds is None:
+            creds = signin()
+        drive_service = build('drive', 'v3', credentials=creds)
+    file = drive_service.files().get(fileId=file_id, fields=fields).execute()
+    return file
+
+
 def get_drive_file_link(file_id, drive_service=None, creds=None):
     """
     Get sharable link for file
@@ -158,10 +175,11 @@ def change_permission(file_id, can_edit=False, drive_service=None, creds=None):
     print('Permissions changed to %s for everyone' % role)
 
 
-def upload_file(filename, drive_service=None, creds=None):
+def upload_file(filename, folder_id=None, drive_service=None, creds=None):
     """
     Upload a local file to Google Drive. If the file exists already, return the previous file link
     :param filename: local filename to upload
+    :param folder_id: None or id of folder
     :param drive_service: GoogleDriveAPI service
     :param creds: GoogleDocsAPI credentials
     :return: webContentLink
@@ -172,14 +190,19 @@ def upload_file(filename, drive_service=None, creds=None):
             creds = signin()
         drive_service = build('drive', 'v3', credentials=creds)
 
-    already_uploaded = find_filename(filename, drive_service)
+    name = os.path.basename(filename)
+    already_uploaded = find_filename(name, drive_service)
     if already_uploaded:
         print('%s already uploaded!' % filename)
         file = already_uploaded[-1]
     else:
         file_metadata = {
-            'name': os.path.basename(filename),
+            'name': name,
         }
+        if folder_id:
+            file_metadata['parents'] = folder_id
+
+        print(file_metadata)
         media = MediaFileUpload(filename,
                                 mimetype='image/jpeg',
                                 resumable=True)
@@ -190,6 +213,7 @@ def upload_file(filename, drive_service=None, creds=None):
 
     change_permission(file.get('id'), drive_service)
 
+    print('File name: %s' % file.get('name'))
     print('File ID: %s' % file.get('id'))
     print('File webContentlink: %s' % file.get('webContentLink'))
     return file.get('webContentLink')
@@ -313,11 +337,12 @@ def append_text(doc_id, text_to_append='', docs_service=None, creds=None):
     print("Append completed")
 
 
-def append_image(doc_id, image_loc='', docs_service=None, creds=None):
+def append_image(doc_id, image_loc='', folder_id=None, docs_service=None, creds=None):
     """
     Append image to end of Goodle Doc
     :param doc_id: str GoogleDoc id
     :param image_loc: location of file, either local filename or http link
+    :param folder_id: None or Drive folder to add image to
     :param docs_service: GoogleDocsAPI service
     :param creds: GoogleDocsAPI credentials
     :return: None
@@ -338,7 +363,7 @@ def append_image(doc_id, image_loc='', docs_service=None, creds=None):
     print('end Index = %s' % end_index)
 
     if not image_loc.startswith('http'):
-        image_loc = upload_file(image_loc, creds=creds)
+        image_loc = upload_file(image_loc, folder_id, creds=creds)
 
     print('\nappend image loc: %s\n' % image_loc)
     # Edit the document
